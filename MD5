@@ -1,0 +1,17 @@
+fc28b78137a7da81149d6a75162646b1 *DESCRIPTION
+22b9d5ddfb67c5d33a8daaec10b44c8a *NAMESPACE
+fa88c509f791bfc55dd2e4d63147ef5f *R/clustRcompaR.R
+c9614101d728432ef169f16be824934c *R/clustRcompaR_background.R
+2d36b0d3105b6571e99bb2f244daba44 *README.md
+8b45bb526ff32808734eab4baa450462 *build/vignette.rds
+62d4894e384e87a9c87eeec9862a0e09 *inst/doc/introduction-to-clustRcompaR.Rmd
+cb9e26e9de3fd14310cd617546ab2107 *inst/doc/introduction-to-clustRcompaR.html
+e53f9d36f4f8e520faada8bbdd8649bf *man/assemble_corpus.Rd
+465def2c7e53c9b630e2239851b0610c *man/clean_dfm.Rd
+211838218ddf0e383db5bc83618fc883 *man/cluster.Rd
+26b3c79c5d2ddcd0d4d242fe1a318c85 *man/cluster_text.Rd
+5ba8e3974fdcd1730fe806f1e16e6754 *man/compare.Rd
+bd5b6ceca8c17f4bdde54996dbc2d4d2 *man/compare_plot.Rd
+8093e4d8c2e5af696f7ad25441933549 *man/compare_test.Rd
+2cd3c7cdbbf09419703813df1b81f630 *man/deviationalize.Rd
+62d4894e384e87a9c87eeec9862a0e09 *vignettes/introduction-to-clustRcompaR.Rmd
