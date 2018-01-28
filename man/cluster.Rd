@@ -5,7 +5,7 @@
 \title{Cluster wrapper function}
 \usage{
 cluster(data, ..., n_clusters, minimum_term_frequency = 3, min_terms = 3,
-  num_terms = 10, stopwords = NULL)
+  num_terms = 10, stopwords = NULL, remove_twitter = FALSE)
 }
 \arguments{
 \item{data}{The data frame comparing the text vector as the first column}
@@ -14,13 +14,15 @@ cluster(data, ..., n_clusters, minimum_term_frequency = 3, min_terms = 3,
 
 \item{n_clusters}{The number of clusters to be used for the clustering solution}
 
-\item{minimum_term_frequency}{The minimum number of occurances for a term to be included}
+\item{minimum_term_frequency}{The minimum number of occurences for a term to be included}
 
 \item{min_terms}{The minimum number of terms for a document to be included}
 
 \item{num_terms}{Number of terms to display in clustering summary output}
 
 \item{stopwords}{Additional stopwords to exclude from clustering analysis}
+
+\item{remove_twitter}{Whether to remove text associated with Twitter content, useful for when analyzing data from this source (defaults to FALSE)}
 }
 \description{
 Cluster wrapper function
@@ -28,5 +30,21 @@ Cluster wrapper function
 \details{
 Performs the clustering half of the process, including assembling
  and cleaning the corpus, deviationalizing and clustering.
+}
+\examples{
+library(clustRcompaR)
+library(dplyr)
+library(quanteda)
+
+d <- inaugural_addresses
+d <- mutate(d, century = ifelse(Year < 1800, "17th",
+                                ifelse(Year >= 1800 & Year < 1900, "18th",
+                                       ifelse(Year >= 1900 & Year < 2000, "19th", "20th"))))
+
+three_clusters <- cluster(d, century, n_clusters = 3)
+extract_terms(three_clusters)
+
+three_clusters_comparison <- compare(three_clusters, "century")
+compare_plot(three_clusters_comparison)
 }
 

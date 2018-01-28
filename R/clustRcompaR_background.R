@@ -13,13 +13,14 @@ process_cutdata <- function(data, corpus, min_terms){
 #'  first column
 #' @param ... The metadata columns following the text column
 #' @param stopwords Words to exclude from the clustering
+#' @inheritParams cluster
 #' @details Puts together the corpus and dfm from the data frame provided
 #' @export
-assemble_corpus <- function(data, stopwords){
+assemble_corpus <- function(data, stopwords, remove_twitter){
   data <- data.frame(data, stringsAsFactors = F)
   corpus_frame <- dplyr::select(data, dplyr::everything())
   text_vector <- as.character(corpus_frame[,1])
-  dfm <- quanteda::dfm(text_vector, removeTwitter = T, stem = T, ignoredFeatures = stopwords)
+  dfm <- quanteda::dfm(text_vector, remove_twitter = remove_twitter, stem = TRUE, remove = stopwords, remove_punct = TRUE)
   a_corp <- quanteda::corpus(text_vector)
   quanteda::metadoc(a_corp) <- corpus_frame[,2:ncol(corpus_frame)]
   results = list(Corpus = a_corp, DFM = dfm)
@@ -28,7 +29,7 @@ assemble_corpus <- function(data, stopwords){
 
 #' Cleans the DFM based on specified term minimums
 #'
-#' @param corp A corpus opject as created by \code{assemble_corpus}.
+#' @param corp A corpus object as created by \code{assemble_corpus}.
 #' @param minimum_term_frequency Minimum number of occurances for a term to be used
 #' @param min_terms Minimum number of terms for document to be used
 #' @details Removes terms and documents that don't meet term and doc minimums
@@ -44,7 +45,7 @@ clean_dfm <- function(corp, minimum_term_frequency, min_terms){
 
 # calculates vector projections
 vect_project <- function(a,b){
-  project <- crossprod(a,b) * b
+  project <- suppressWarnings(crossprod(a,b) * b)
   project
 }
 
@@ -134,3 +135,16 @@ cluster_text <- function(mat, dev_mat, n_clusters, cleanDFM, num_terms){
   # new output including the kmeans output as well as the most frequent terms
   results = list(clusters = kfit, terms = clusterTerms)
 }
+
+#' Data on the inaugural addresses by every United States President (from the quanteda package)
+#'
+#' @source http://docs.quanteda.io/
+#' @format Data frame with columns
+#' #' \describe{
+#'   \item{texts}{text contents of the inaugural addresses}
+#'   \item{Year}{year of the address}
+#'   \item{President}{last name of the President}
+#'   \item{FirstName}{first name of the President}
+#' }
+
+"inaugural_addresses"

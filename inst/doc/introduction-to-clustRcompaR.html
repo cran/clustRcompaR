@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -12,12 +12,50 @@
 
 <meta name="author" content="Joshua Rosenberg and Alex Lishinski" />
 
-<meta name="date" content="2017-01-06" />
+<meta name="date" content="2018-01-28" />
 
 <title>Introduction to clustRcompaR</title>
 
 
 
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
 
 
 
@@ -32,7 +70,7 @@
 
 <h1 class="title toc-ignore">Introduction to clustRcompaR</h1>
 <h4 class="author"><em>Joshua Rosenberg and Alex Lishinski</em></h4>
-<h4 class="date"><em>2017-01-06</em></h4>
+<h4 class="date"><em>2018-01-28</em></h4>
 
 
 
@@ -56,6 +94,67 @@
 <li><p>This output can be examined and used on its own, or be passed to two functions, <code>compare_plot()</code>, which plots the table using <a href="https://github.com/hadley/ggplot2"><code>ggplot2</code></a>, or <code>compare_test()</code>, which performs a chi-square test of proportions on the table and indicates across which levels of the factor clusters appear more or less likely than expected.</p></li>
 </ul>
 </div>
+<div id="example" class="section level2">
+<h2>Example</h2>
+<p>Here is an example using the built-in <code>inaugural_addresses</code> dataset (from the quanteda package). This dataset consists of the inaugural addresses by every United States President.</p>
+<p>First, we use <code>cluster()</code> to cluster the documents into three clusters. We include a new variable, <code>year_before_1900</code>, which we will later use to compare frequencies across clusters. Then we use <code>extract_terms()</code> to view the terms and term frequencies in the two clusters.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(clustRcompaR)
+<span class="kw">library</span>(dplyr)</code></pre></div>
+<pre><code>## 
+## Attaching package: 'dplyr'</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(quanteda)</code></pre></div>
+<pre><code>## quanteda version 0.99.22</code></pre>
+<pre><code>## Using 3 of 4 threads for parallel computing</code></pre>
+<pre><code>## 
+## Attaching package: 'quanteda'</code></pre>
+<pre><code>## The following object is masked from 'package:utils':
+## 
+##     View</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-<span class="st"> </span>inaugural_addresses
+d &lt;-<span class="st"> </span><span class="kw">mutate</span>(d, <span class="dt">century =</span> <span class="kw">ifelse</span>(Year <span class="op">&lt;</span><span class="st"> </span><span class="dv">1800</span>, <span class="st">&quot;17th&quot;</span>,
+                                <span class="kw">ifelse</span>(Year <span class="op">&gt;=</span><span class="st"> </span><span class="dv">1800</span> <span class="op">&amp;</span><span class="st"> </span>Year <span class="op">&lt;</span><span class="st"> </span><span class="dv">1900</span>, <span class="st">&quot;18th&quot;</span>,
+                                       <span class="kw">ifelse</span>(Year <span class="op">&gt;=</span><span class="st"> </span><span class="dv">1900</span> <span class="op">&amp;</span><span class="st"> </span>Year <span class="op">&lt;</span><span class="st"> </span><span class="dv">2000</span>, <span class="st">&quot;19th&quot;</span>, <span class="st">&quot;20th&quot;</span>))))
+
+three_clusters &lt;-<span class="st"> </span><span class="kw">cluster</span>(d, century, <span class="dt">n_clusters =</span> <span class="dv">3</span>)</code></pre></div>
+<pre><code>## Document-feature matrix of: 58 documents, 2,820 features (79.6% sparse).</code></pre>
+<pre><code>## Note: method with signature 'dfm#index#missing#missing' chosen for function '[',
+##  target signature 'dfm#logical#missing#missing'.
+##  &quot;Matrix#logical#missing#missing&quot; would also be valid</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">extract_terms</span>(three_clusters)</code></pre></div>
+<pre><code>##    Cluster.1.Terms Cluster.1.Term.Frequencies Cluster.2.Terms
+## 1               in                  34.200000              in
+## 2               my                  13.866667           their
+## 3            their                  12.333333          govern
+## 4             will                  11.200000            will
+## 5           govern                   9.533333             has
+## 6            peopl                   7.200000              it
+## 7               it                   7.133333           state
+## 8           nation                   7.000000            been
+## 9              has                   6.733333           peopl
+## 10         countri                   6.533333          nation
+##    Cluster.2.Term.Frequencies Cluster.3.Terms Cluster.3.Term.Frequencies
+## 1                    77.52941              in                  36.692308
+## 2                    22.88235            will                  16.076923
+## 3                    21.41176          nation                  12.500000
+## 4                    20.29412              us                  12.038462
+## 5                    20.00000           world                   9.807692
+## 6                    19.41176           peopl                   9.307692
+## 7                    18.23529             can                   7.769231
+## 8                    17.82353            must                   7.730769
+## 9                    16.05882         america                   7.423077
+## 10                   14.41176              no                   7.192308</code></pre>
+<p>Second, we use the <code>compare()</code> function to compare the frequency of clusters across a factor, in this case, the century. We can then use the <code>compare_plot()</code> or <code>compare_test()</code> (which uses a Chi-Square test) function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">three_clusters_comparison &lt;-<span class="st"> </span><span class="kw">compare</span>(three_clusters, <span class="st">&quot;century&quot;</span>)
+
+<span class="kw">compare_plot</span>(three_clusters_comparison)</code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAAGFBMVEUAAAAzMzM3frhNTU1Nr0rkGhzr6+v///8s9d2yAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAFZklEQVR4nO3djZaaOABAYbq0zfu/8VZQfpNcBhGCufecGZ0xjuErKiuLNsGyNVdPoPQEggSCBIIEggSC3gL6VVpHqUx6Dyjyu798NR6yc4RAMEIgGCEQjBAIRlwC1A5n2nZykpxQZUAjR9t/PU/SE6oMaNQQKJFAkEBQCqjbtP97cb+Huh+LAuqQIuNPXYNGoOR83k0gaBtQx1LgdlAJQLkEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEgtyzCrkGQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkGfBVosfexvCCRQZoRAMEIgGCEQjBAIRtwDaDi4p227s8+TkJxQZUCzw8Nex4sNCTQHmmslJlQ90HkH1N0OaAZ1wkG949IXvOs5DdQhRa5R+xp04kG9dwNql78Q6FH/mDx18kF6ewJBAkECQQJBAkECQTcCappuSX++uHUAdTqPb5HFBYFKgF7fBYrWTM8Nd7Wmu9tNv//7dbMEqRdoetobhTVP9UDPC5e/i153R7cGGu9W/dl9j+H5ugn9GZrMPFshQGF8YmtWAyPX3dFdgGbPYrPtIYH6pttBwwNyd8HiQTpyVZxsptsAzbakH2cnj0Fh9jS/viJONtONgHYnECQQJBAkEPQe0GN/7whU467nfHdZg/7E4nl2CQQJBAkECQQJBFUPRACVAzWRV6HnVQ7kGhTmUxQomkACJf6GQAJlRggEI84BogSCBIIEggSCBIIIaHlQ7/pgFgZaTuqbdvuMh/m0y18EgcK3AP0XCyfRtx1odeSYQCFx3LxAY2mg4ajncfFTO4h5xId3PZ9zFwuuQZEE2rYdlPso43sD4W6NM7akCwZK/J+bkyoHeiRQHsi7WB6ohJdcSwbC5a8ciBdfIKh2oIY2hM4Fij3LxrrRlnQ2gSCBIIEggSCBIIGguwC9UxVAv2NtWcAgECYQJBAkECQQdMZBvVGgM/esZoAK2+1T3BpU2m6f4oAeCZQF8i4WXIMESo3wQVqgROfdxU7dDkotfclAmECQQJBAkECQQJBAUBVA7yQQJBAkECQQJBAkELT5qOcwHPTcpg6HqhEoerzYkEBbPutZIPgoY4Hgo4xji1/YrudzgGb3tD7XoJ+984JAQaBVw1HPG979pUqgbAJBAkECQQJBAkECQZ8AGkcIFE0ggQQaEggSCBIIEggSCBIIEggSCBIIEggSCBII+sSu5xhQwbue87kGQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJB7wClFl8ggQQaEmh9UO9hB7N8CdCPPgRSIIFWCSQQtBtoOOq5oIoC6pAi14i8E+fPh+wcIRCMuPSg3uR20KLagLIJBAkECQQJBAkECQT9Kq2jVCa9BRRrwyR5yBEjDkogSCBIIOhwoG9LIOgooNd/6bft+v0op0Mm7/m1Y8TsFYXEzRzcMUCT10BSQK9lSw/ZMGK4KHkzh3foGhRebwf376SNLt5z4RJDeMQEKDni2D4A1COt/3mXd6D1kOUalPgj+REHdzDQaxFnr8yG+WWTu0cMKMweyIAwcjMHVyBQZsTy5XGB5iMmN3JToOH7G0CZEV8D1KaBhnd+zz4GJUbM3y41cTMH55Y0JBAkECQQJBAkECQQdAlQg5+PW04XTLTHuQvRFUCX3fKezp9mMz37WI+ed7jmeWHDH1B9ZtcCNc9v3dfzwtfPhXQRUL/WNOPP69NCum4NEghuUSC4SYGSN9k/NA8WTfyrkK7akh5XlmG7+nHi0zxX2IwKm04obkaFTScUN6PCplNeAkECQQJBAkECQQJBAkECQf8DfcE0Tx76w2kAAAAASUVORK5CYII=" /><!-- --></p>
+</div>
 </div>
 
 
@@ -65,7 +164,7 @@
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>

@@ -4,13 +4,15 @@
 \alias{assemble_corpus}
 \title{First corpus building function}
 \usage{
-assemble_corpus(data, stopwords)
+assemble_corpus(data, stopwords, remove_twitter)
 }
 \arguments{
 \item{data}{The data from which the corpus is drawn with documents in
 first column}
 
 \item{stopwords}{Words to exclude from the clustering}
+
+\item{remove_twitter}{Whether to remove text associated with Twitter content, useful for when analyzing data from this source (defaults to FALSE)}
 
 \item{...}{The metadata columns following the text column}
 }
